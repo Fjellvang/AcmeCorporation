@@ -4,9 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace AcmeCorporation.Models
+namespace AcmeCorporation.Core.Data.Models
 {
 	public class ApplicationUser : IdentityUser
 	{
+		public UserSerial SerialRelation { get; set; }
 	}
 }

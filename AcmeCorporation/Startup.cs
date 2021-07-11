@@ -1,5 +1,5 @@
+using AcmeCorporation.Core.Data.Models;
 using AcmeCorporation.Data;
-using AcmeCorporation.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -26,17 +26,17 @@ namespace AcmeCorporation
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
-			services.AddDbContext<ApplicationDbContext>(options =>
+			services.AddDbContext<AcmeCorporationDbContext>(options =>
 				options.UseSqlServer(
 					Configuration.GetConnectionString("DefaultConnection")));
 
 			services.AddDatabaseDeveloperPageExceptionFilter();
 
 			services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
-				.AddEntityFrameworkStores<ApplicationDbContext>();
+				.AddEntityFrameworkStores<AcmeCorporationDbContext>();
 
 			services.AddIdentityServer()
-				.AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
+				.AddApiAuthorization<ApplicationUser, AcmeCorporationDbContext>();
 
 			services.AddAuthentication()
 				.AddIdentityServerJwt();
@@ -52,7 +52,7 @@ namespace AcmeCorporation
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-		public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ApplicationDbContext context)
+		public void Configure(IApplicationBuilder app, IWebHostEnvironment env, AcmeCorporationDbContext context)
 		{
 			if (env.IsDevelopment())
 			{

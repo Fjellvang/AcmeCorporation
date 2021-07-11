@@ -1,4 +1,4 @@
-﻿using AcmeCorporation.Models;
+﻿using AcmeCorporation.Core.Data.Models;
 using IdentityServer4.EntityFramework.Options;
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.EntityFrameworkCore;
@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace AcmeCorporation.Data
 {
-	public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>
+	public class AcmeCorporationDbContext : ApiAuthorizationDbContext<ApplicationUser>
 	{
-		public ApplicationDbContext(
+		public AcmeCorporationDbContext(
 			DbContextOptions options,
 			IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
 		{
