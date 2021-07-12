@@ -43,7 +43,7 @@ namespace AcmeCorporation.Core.Draw
 			return Ok("HEJ");
 		}
 
-		[HttpGet(nameof(GetAllSubmissions))]
+		[HttpGet(nameof(GetAllSubmissions)), Authorize(policy: "admin")]
 		public async Task<IActionResult> GetAllSubmissions(int page = 0, int pageSize = 10, CancellationToken cancellationToken = default)
 		{
 			var submissions = await context.Serials.Where(x => x.UserRelation != null)

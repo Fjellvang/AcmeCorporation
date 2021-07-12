@@ -52,25 +52,25 @@ namespace AcmeCorporation
 			services.AddTransient<IDrawSubmissionService, DrawSubmissionService>();
 			services.AddTransient<DatabaseSeeder>();
 
-			//services.AddAuthorization(opts =>
-			//{
-			//	foreach (var policyConfig in Configuration.GetSection("AuthorizationPolicies").Get<AuthorizationPolicyConfig[]>())
-			//	{
-			//		var policyBuilder = new AuthorizationPolicyBuilder()
-			//			.RequireAuthenticatedUser();
+			services.AddAuthorization(opts =>
+			{
+				foreach (var policyConfig in Configuration.GetSection("AuthorizationPolicies").Get<AuthorizationPolicyConfig[]>())
+				{
+					var policyBuilder = new AuthorizationPolicyBuilder()
+						.RequireAuthenticatedUser();
 
-			//		if (!string.IsNullOrWhiteSpace(policyConfig.RoleName))
-			//		{
-			//			policyBuilder
-			//				.RequireRole(policyConfig.RoleName);
-			//		}
+					if (!string.IsNullOrWhiteSpace(policyConfig.RoleName))
+					{
+						policyBuilder
+							.RequireRole(policyConfig.RoleName);
+					}
 
-			//		var policy = policyBuilder
-			//			.Build();
+					var policy = policyBuilder
+						.Build();
 
-			//		opts.AddPolicy(policyConfig.PolicyName, policy);
-			//	}
-			//});
+					opts.AddPolicy(policyConfig.PolicyName, policy);
+				}
+			});
 
 			// In production, the React files will be served from this directory
 			services.AddSpaStaticFiles(configuration =>
