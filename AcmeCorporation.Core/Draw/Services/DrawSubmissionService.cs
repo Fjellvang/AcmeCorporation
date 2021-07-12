@@ -34,6 +34,7 @@ namespace AcmeCorporation.Core.Draw.Services
 				ApplicationUser user = new ApplicationUser()
 				{
 					Email = view.Email,
+					UserName = view.Email,
 					FirstName = view.FirstName,
 					LastName = view.LastName,
 				};
