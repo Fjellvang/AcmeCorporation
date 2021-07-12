@@ -16,6 +16,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Security.Claims;
 
 namespace AcmeCorporation
 {
@@ -37,7 +38,7 @@ namespace AcmeCorporation
 
 			services.AddDatabaseDeveloperPageExceptionFilter();
 
-			services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+			services.AddDefaultIdentity<ApplicationUser>(x => x.ClaimsIdentity.UserIdClaimType = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")
 				.AddEntityFrameworkStores<AcmeCorporationDbContext>();
 
 			services.AddIdentityServer()
@@ -61,8 +62,8 @@ namespace AcmeCorporation
 
 					if (!string.IsNullOrWhiteSpace(policyConfig.RoleName))
 					{
-						policyBuilder
-							.RequireRole(policyConfig.RoleName);
+						//policyBuilder
+						//	.RequireClaim(policyConfig.RoleName);
 					}
 
 					var policy = policyBuilder

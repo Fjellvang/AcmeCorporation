@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -46,14 +47,21 @@ namespace AcmeCorporation.Core.Draw
 		[HttpGet(nameof(GetAllSubmissions)), Authorize(policy: "admin")]
 		public async Task<IActionResult> GetAllSubmissions(int page = 0, int pageSize = 10, CancellationToken cancellationToken = default)
 		{
-			var submissions = await context.Serials.Where(x => x.UserRelation != null)
-				.Select(x => new { x.UserRelation.User.Email, Serial = x.Key })
-				.Skip(page*pageSize)
-				.Take(pageSize)
-				.ToArrayAsync(cancellationToken)
-				;
+			//Poor mans authentication....
+			var user = await userManager.FindByIdAsync(this.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+			var claims = await userManager.GetClaimsAsync(user);
+			if (claims.Any(x => x.Type == "admin"))
+			{
+				var submissions = await context.Serials.Where(x => x.UserRelation != null)
+					.Select(x => new { x.UserRelation.User.Email, Serial = x.Key })
+					.Skip(page*pageSize)
+					.Take(pageSize)
+					.ToArrayAsync(cancellationToken)
+					;
 
-			return Ok(submissions);
+				return Ok(submissions);
+			}
+			return Ok(Array.Empty<object>());
 		}
 
 		[HttpPost(nameof(SubmitDrawAuthorized)), Authorize]
