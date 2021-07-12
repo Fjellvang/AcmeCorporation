@@ -1,31 +1,51 @@
 import React, { Component } from 'react';
+import authService from './api-authorization/AuthorizeService'
 
 export class Counter extends Component {
-  static displayName = Counter.name;
+	static displayName = Counter.name;
 
-  constructor(props) {
-    super(props);
-    this.state = { currentCount: 0 };
-    this.incrementCounter = this.incrementCounter.bind(this);
-  }
+	constructor(props) {
+		super(props);
+		this.state = { currentCount: 0 };
+		this.incrementCounter = this.submitForm.bind(this);
+	}
 
-  incrementCounter() {
-    this.setState({
-      currentCount: this.state.currentCount + 1
-    });
-  }
+	async submitForm(e) {
+		e.preventDefault();
+		const target = e.target;
+		const password = target.password.value;
+		const email = target.email.value;
 
-  render() {
-    return (
-      <div>
-        <h1>Counter</h1>
+		//const token = await authService.getAccessToken();
+		const response = await fetch('api/draw/submitDraw', {
+			method: 'POST',
+			//headers: !token ? {} : { 'Authorization': `Bearer ${token}` },
+			headers: { 'Content-Type': ' application/json'},
+			body: JSON.stringify({email:email, password:password}),
+		});
+	}
 
-        <p>This is a simple example of a React component.</p>
-
-        <p aria-live="polite">Current count: <strong>{this.state.currentCount}</strong></p>
-
-        <button className="btn btn-primary" onClick={this.incrementCounter}>Increment</button>
-      </div>
-    );
-  }
+	render() {
+		return (
+			<div>
+				<h1>Counter</h1>
+				<form onSubmit={this.submitForm}>
+					<div class="mb-3">
+						<label class="form-label">Email address</label>
+						<input type="email" class="form-control" id="email" aria-describedby="emailHelp" />
+						<div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+					</div>
+					<div class="mb-3">
+						<label class="form-label">Password</label>
+						<input type="password" class="form-control" id="password" />
+					</div>
+					<div class="mb-3 form-check">
+						<input type="checkbox" class="form-check-input" id="checkbox" />
+						<label class="form-check-label">Check me out</label>
+					</div>
+					<button type="submit" class="btn btn-primary">Submit</button>
+				</form>
+			</div>
+		);
+	}
 }
