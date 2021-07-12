@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace AcmeCorporation.Core.Draw.Services
@@ -20,12 +21,14 @@ namespace AcmeCorporation.Core.Draw.Services
 			this.userStore = userStore;
 			this.context = context;
 		}
-		public Task<SubmissionResult> SubmitSerialAsync(DrawSubmissionView view)
+		public async Task<SubmissionResult> SubmitSerialAsync(DrawSubmissionView view, CancellationToken cancellationToken = default)
 		{
-			return Task.FromResult(SubmissionResult.Success);
+			var existingUser = await userStore.FindByNameAsync(view.Email, cancellationToken);
+
+			return SubmissionResult.Success;
 		}
 
-		public Task<SubmissionResult> SubmitSerialAsync(string userId, Guid Serial)
+		public Task<SubmissionResult> SubmitSerialAsync(string userId, Guid Serial, CancellationToken cancellationToken = default)
 		{
 			return Task.FromResult(SubmissionResult.Success);
 		}
