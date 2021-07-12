@@ -17,5 +17,8 @@ namespace AcmeCorporation.Data
 			IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
 		{
 		}
+
+		public DbSet<Serial> Serials { get; set; }
+		public DbSet<UserSerial> UserSerials { get; set; }
 	}
 }
