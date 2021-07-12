@@ -22,12 +22,12 @@ namespace AcmeCorporation.Core.Draw.Services
 		}
 		public Task<SubmissionResult> SubmitSerialAsync(DrawSubmissionView view)
 		{
-			throw new NotImplementedException();
+			return Task.FromResult(SubmissionResult.Success);
 		}
 
 		public Task<SubmissionResult> SubmitSerialAsync(string userId, Guid Serial)
 		{
-			throw new NotImplementedException();
+			return Task.FromResult(SubmissionResult.Success);
 		}
 	}
 }

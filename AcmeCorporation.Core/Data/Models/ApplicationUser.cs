@@ -8,6 +8,9 @@ namespace AcmeCorporation.Core.Data.Models
 {
 	public class ApplicationUser : IdentityUser
 	{
-		public UserSerial SerialRelation { get; set; }
+		public string FirstName { get; set; }
+		public string LastName { get; set; }
+
+		public List<UserSerial> SerialRelations { get; set; }
 	}
 }
