@@ -5,12 +5,14 @@ VisualStudioVersion = 16.0.31229.75
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AcmeCorporation", "AcmeCorporation\AcmeCorporation.csproj", "{DCC8FD68-7C7E-4CAF-BD78-72F6B8E58772}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AcmeCorporation.Core", "AcmeCorporation.Core\AcmeCorporation.Core.csproj", "{D7E057AE-C2FD-4D27-9A2F-8D258296EC18}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AcmeCorporation.Core", "AcmeCorporation.Core\AcmeCorporation.Core.csproj", "{D7E057AE-C2FD-4D27-9A2F-8D258296EC18}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{633968FC-775F-4594-9D5C-4F86BA9140B2}"
 	ProjectSection(SolutionItems) = preProject
 		migration.sh = migration.sh
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AcmeCorporation.Test", "AcmeCorporation.Test\AcmeCorporation.Test.csproj", "{CC0A2DC2-23F5-470E-B863-F45E8682493D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,6 +28,10 @@ Global
 		{D7E057AE-C2FD-4D27-9A2F-8D258296EC18}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D7E057AE-C2FD-4D27-9A2F-8D258296EC18}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D7E057AE-C2FD-4D27-9A2F-8D258296EC18}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC0A2DC2-23F5-470E-B863-F45E8682493D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC0A2DC2-23F5-470E-B863-F45E8682493D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC0A2DC2-23F5-470E-B863-F45E8682493D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC0A2DC2-23F5-470E-B863-F45E8682493D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

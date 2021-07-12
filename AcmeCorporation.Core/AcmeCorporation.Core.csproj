@@ -16,8 +16,4 @@
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Draw\Services\" />
-  </ItemGroup>
-
 </Project>
