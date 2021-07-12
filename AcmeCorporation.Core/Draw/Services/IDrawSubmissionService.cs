@@ -14,7 +14,7 @@ namespace AcmeCorporation.Core.Draw.Services
 		SerialAlreadySubmitted,
 		Failure,
 	}
-	interface IDrawSubmissionService
+	public interface IDrawSubmissionService
 	{
 		Task<SubmissionResult> SubmitSerialAsync(DrawSubmissionView view);
 		Task<SubmissionResult> SubmitSerialAsync(string userId, Guid Serial);
