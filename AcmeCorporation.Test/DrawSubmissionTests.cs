@@ -2,9 +2,12 @@ using AcmeCorporation.Core.Data.Models;
 using AcmeCorporation.Core.Draw.Dtos;
 using AcmeCorporation.Core.Draw.Services;
 using AcmeCorporation.Data;
+using AcmeCorporation.Test;
+using AcmeCorporation.Test.Helpers;
 using IdentityServer4.EntityFramework.Options;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using NUnit.Framework;
@@ -19,33 +22,13 @@ namespace AcmeCorportation.Test
 	{
 		private DrawSubmissionService service;
 		private ApplicationUser applicationUser;
-		private Mock<IUserStore<ApplicationUser>> storeMock;
+		private Mock<UserManager<ApplicationUser>> storeMock;
 		private AcmeCorporationDbContext dbContext;
 		private DrawSubmissionView view;
 
 		[SetUp]
 		public void Setup()
 		{
-			applicationUser = new ApplicationUser()
-			{
-				Email = "a@b.dk"
-			};
-			storeMock = new Mock<IUserStore<ApplicationUser>>();
-			storeMock.SetupSequence(x => x.CreateAsync(applicationUser, default))
-				.Returns(Task.FromResult(IdentityResult.Success))
-				.Returns(Task.FromResult(IdentityResult.Failed(It.IsAny<IdentityError>())));
-
-			var options = new DbContextOptionsBuilder<AcmeCorporationDbContext>()
-				  .UseInMemoryDatabase(Guid.NewGuid().ToString())
-				  .Options;
-			var opOptions = new OperationalStoreOptions();
-			dbContext = new AcmeCorporationDbContext(options, Options.Create(opOptions));
-			dbContext.SaveChanges();
-
-			dbContext.Serials.Add(new Serial() { Id = 0, Key = Guid.Empty });
-
-			service = new DrawSubmissionService(storeMock.Object, dbContext);
-
 			view = new AcmeCorporation.Core.Draw.Dtos.DrawSubmissionView()
 			{
 				FirstName = "Don Pedro",
@@ -54,6 +37,29 @@ namespace AcmeCorportation.Test
 				Email = "a@b.dk",
 				Password = "123456"
 			};
+			applicationUser = new ApplicationUser()
+			{
+				Email = view.Email,
+				FirstName = view.FirstName,
+				LastName = view.LastName,
+			};
+			storeMock = MockHelpers.MockUserManager<ApplicationUser>();
+			var options = new DbContextOptionsBuilder<AcmeCorporationDbContext>()
+				  .UseInMemoryDatabase(Guid.NewGuid().ToString())
+				  .Options;
+			var opOptions = new OperationalStoreOptions();
+			dbContext = new AcmeCorporationDbContext(options, Options.Create(opOptions));
+			dbContext.SaveChanges();
+			dbContext.Serials.Add(new Serial() { Id = 0, Key = Guid.Empty });
+			storeMock.SetupSequence(x => x.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
+				.ReturnsAsync(IdentityResult.Success)
+				.ReturnsAsync(IdentityResult.Failed(It.IsAny<IdentityError>()));
+
+
+			var logMock = new Mock<ILogger<DrawSubmissionService>>();
+
+			service = new DrawSubmissionService(storeMock.Object, dbContext, logMock.Object);
+
 		}
 
 		[Test]
@@ -63,7 +69,7 @@ namespace AcmeCorportation.Test
 			//act
 			await service.SubmitSerialAsync(view);
 			//assert
-			storeMock.Verify(x => x.CreateAsync(It.IsAny<ApplicationUser>(), default), Times.Once);
+			storeMock.Verify(x => x.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()), Times.Once);
 		}
 		[Test]
 		public async Task Test_Fresh_User_BadId_Failure()
@@ -80,7 +86,7 @@ namespace AcmeCorportation.Test
 			//act
 			var result = await service.SubmitSerialAsync(badView);
 			//assert
-			Assert.AreEqual(SubmissionResult.Success, result);
+			Assert.AreEqual(SubmissionResult.InvalidSerial, result);
 
 		}
 		[Test]

@@ -11,7 +11,8 @@ namespace AcmeCorporation.Core.Draw.Services
 	{
 		Success,
 		InvalidSerial,
-		SerialAlreadySubmitted
+		SerialAlreadySubmitted,
+		Failure,
 	}
 	interface IDrawSubmissionService
 	{
