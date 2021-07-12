@@ -1,9 +1,11 @@
+using AcmeCorporation.Core.Common.Configuration;
 using AcmeCorporation.Core.Common.Middleware;
 using AcmeCorporation.Core.Data;
 using AcmeCorporation.Core.Data.Models;
 using AcmeCorporation.Core.Draw.Services;
 using AcmeCorporation.Data;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -46,7 +48,29 @@ namespace AcmeCorporation
 
 			services.AddControllersWithViews();
 			services.AddRazorPages();
+
 			services.AddTransient<IDrawSubmissionService, DrawSubmissionService>();
+			services.AddTransient<DatabaseSeeder>();
+
+			//services.AddAuthorization(opts =>
+			//{
+			//	foreach (var policyConfig in Configuration.GetSection("AuthorizationPolicies").Get<AuthorizationPolicyConfig[]>())
+			//	{
+			//		var policyBuilder = new AuthorizationPolicyBuilder()
+			//			.RequireAuthenticatedUser();
+
+			//		if (!string.IsNullOrWhiteSpace(policyConfig.RoleName))
+			//		{
+			//			policyBuilder
+			//				.RequireRole(policyConfig.RoleName);
+			//		}
+
+			//		var policy = policyBuilder
+			//			.Build();
+
+			//		opts.AddPolicy(policyConfig.PolicyName, policy);
+			//	}
+			//});
 
 			// In production, the React files will be served from this directory
 			services.AddSpaStaticFiles(configuration =>
@@ -56,7 +80,7 @@ namespace AcmeCorporation
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-		public void Configure(IApplicationBuilder app, IWebHostEnvironment env, AcmeCorporationDbContext context)
+		public void Configure(IApplicationBuilder app, IWebHostEnvironment env, AcmeCorporationDbContext context, DatabaseSeeder seeder)
 		{
 			if (env.IsDevelopment())
 			{
@@ -98,7 +122,7 @@ namespace AcmeCorporation
 			});
 			app.UseMiddleware<ProblemDetailsMiddleware>();
 			context.Database.Migrate();
-			DatabaseSeeder.Seed(context);
+			seeder.SeedAsync().GetAwaiter().GetResult();
 		}
 	}
 }

@@ -1,4 +1,6 @@
-﻿using AcmeCorporation.Data;
+﻿using AcmeCorporation.Core.Data.Models;
+using AcmeCorporation.Data;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,11 +10,19 @@ using System.Threading.Tasks;
 
 namespace AcmeCorporation.Core.Data
 {
-	public static class DatabaseSeeder
+	public class DatabaseSeeder
 	{
+		public DatabaseSeeder(AcmeCorporationDbContext context, UserManager<ApplicationUser> userManager)
+		{
+			this.context = context;
+			this.userManager = userManager;
+		}
 		private const string GuidFilePath = "../validGuids.txt";
+		private const string adminEmail = "admin@admin.dk";
+		private readonly AcmeCorporationDbContext context;
+		private readonly UserManager<ApplicationUser> userManager;
 
-		public static void Seed(AcmeCorporationDbContext context)
+		public async Task SeedAsync()
 		{
 			var serialsExist = context.Serials.Any();
 			if (!serialsExist)
@@ -30,6 +40,18 @@ namespace AcmeCorporation.Core.Data
 				}
 				context.SaveChanges();
 			}
+
+
+			var admin = await userManager.FindByEmailAsync(adminEmail);
+			if (admin is null)
+			{
+				ApplicationUser adminUser = new ApplicationUser() { FirstName = "Admin", LastName = "Admin", UserName = adminEmail, Email = adminEmail };
+				adminUser.EmailConfirmed = true;
+				await userManager.CreateAsync(adminUser, "!QAZxsw2");
+				await context.SaveChangesAsync();
+				var result = await userManager.AddClaimAsync(adminUser, new System.Security.Claims.Claim("admin", "admin"));
+			}
+
 		}
 	}
 }
