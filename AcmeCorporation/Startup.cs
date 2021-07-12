@@ -1,4 +1,7 @@
+using AcmeCorporation.Core.Common.Middleware;
+using AcmeCorporation.Core.Data;
 using AcmeCorporation.Core.Data.Models;
+using AcmeCorporation.Core.Draw.Services;
 using AcmeCorporation.Data;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
@@ -43,6 +46,7 @@ namespace AcmeCorporation
 
 			services.AddControllersWithViews();
 			services.AddRazorPages();
+			services.AddTransient<IDrawSubmissionService, DrawSubmissionService>();
 
 			// In production, the React files will be served from this directory
 			services.AddSpaStaticFiles(configuration =>
@@ -92,7 +96,9 @@ namespace AcmeCorporation
 					spa.UseReactDevelopmentServer(npmScript: "start");
 				}
 			});
+			app.UseMiddleware<ProblemDetailsMiddleware>();
 			context.Database.Migrate();
+			DatabaseSeeder.Seed(context);
 		}
 	}
 }

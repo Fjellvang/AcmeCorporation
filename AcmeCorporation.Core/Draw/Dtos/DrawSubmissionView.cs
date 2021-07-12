@@ -14,6 +14,6 @@ namespace AcmeCorporation.Core.Draw.Dtos
 		public string Password { get; set; }
 		public Guid Serial { get; set; }
 
-		public bool AboveEightteen { get; set; }
+		public bool AboveEighteen { get; set; }
 	}
 }

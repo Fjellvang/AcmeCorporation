@@ -20,22 +20,31 @@ namespace AcmeCorporation.Core.Draw
 		private readonly ILogger<DrawController> logger;
 		private readonly IDrawSubmissionService drawSubmissionService;
 		private readonly SignInManager<ApplicationUser> signInManager;
+		private readonly UserManager<ApplicationUser> userManager;
 
-		public DrawController(ILogger<DrawController> logger, IDrawSubmissionService drawSubmissionService, SignInManager<ApplicationUser> signInManager)
+		public DrawController(ILogger<DrawController> logger, IDrawSubmissionService drawSubmissionService, SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager)
 		{
 			this.logger = logger;
 			this.drawSubmissionService = drawSubmissionService;
 			this.signInManager = signInManager;
+			this.userManager = userManager;
 		}
 
 		[HttpPost(nameof(SubmitDraw))]
-		public ActionResult SubmitDraw([FromBody] DrawSubmissionView submission)
+		public async Task<ActionResult> SubmitDraw([FromBody] DrawSubmissionView submission)
 		{
-			if (!submission.AboveEightteen)
+			if (!submission.AboveEighteen)
 			{
 				return base.BadRequest(BadRequestProblemDetails("User Needs to be above 18."));
 			}
 
+			var result = await drawSubmissionService.SubmitSerialAsync(submission);
+
+			if (result == SubmissionResult.Success)
+			{
+				var user = await userManager.FindByEmailAsync(submission.Email);
+				await signInManager.SignInAsync(user, true);
+			}
 
 			return Ok();
 		}
