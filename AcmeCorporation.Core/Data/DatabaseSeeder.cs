@@ -51,6 +51,7 @@ namespace AcmeCorporation.Core.Data
 				await context.SaveChangesAsync();
 				var result = await userManager.AddClaimAsync(adminUser, new System.Security.Claims.Claim("admin", "admin"));
 			}
+			//await userManager.AddToRoleAsync(admin, "admin");
 
 		}
 	}

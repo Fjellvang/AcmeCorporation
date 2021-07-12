@@ -47,7 +47,7 @@ namespace AcmeCorporation.Core.Draw
 		public async Task<IActionResult> GetAllSubmissions(int page = 0, int pageSize = 10, CancellationToken cancellationToken = default)
 		{
 			var submissions = await context.Serials.Where(x => x.UserRelation != null)
-				.Select(x => new { x.UserRelation.User.Email, x.Key })
+				.Select(x => new { x.UserRelation.User.Email, Serial = x.Key })
 				.Skip(page*pageSize)
 				.Take(pageSize)
 				.ToArrayAsync(cancellationToken)
