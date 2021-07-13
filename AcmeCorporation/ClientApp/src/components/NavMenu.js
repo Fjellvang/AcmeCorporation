@@ -15,7 +15,7 @@ export class NavMenu extends Component {
 		this.toggleNavbar = this.toggleNavbar.bind(this);
 		this.state = {
 			collapsed: true,
-			isAuthenticated: false,
+			isAdmin: false,
 		};
 	}
 	componentDidMount() {
@@ -24,9 +24,18 @@ export class NavMenu extends Component {
 	}
 
 	async populateState() {
-		const isAuthenticated = await authService.isAuthenticated();
+		
+		const token = await authService.getAccessToken();
+		const response = await fetch("/api/admin/isAdmin", {
+			headers: !token ? {} : { 'Authorization': `Bearer ${token}` },
+		});
+		let isAdmin = false;
+		if (response.ok) {
+			const json = await response.json();
+			isAdmin = json.isAdmin;
+		}
 		this.setState({
-			isAuthenticated,
+			isAdmin
 		});
 	}
 
@@ -51,7 +60,7 @@ export class NavMenu extends Component {
 								<NavItem>
 									<NavLink tag={Link} className="text-dark" to="/draw">Draw</NavLink>
 								</NavItem>
-								{this.isAuthenticated ?
+								{this.state.isAdmin ?
 									<NavItem>
 										<NavLink tag={Link} className="text-dark" to="/fetch-data">Submissions</NavLink>
 									</NavItem>
