@@ -4,16 +4,14 @@ using AcmeCorporation.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace AcmeCorporation.Data.Migrations
+namespace AcmeCorporation.Core.Migrations
 {
     [DbContext(typeof(AcmeCorporationDbContext))]
-    [Migration("20210712090938_AddDbSets")]
-    partial class AddDbSets
+    partial class AcmeCorporationDbContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -39,6 +37,16 @@ namespace AcmeCorporation.Data.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -103,30 +111,26 @@ namespace AcmeCorporation.Data.Migrations
 
             modelBuilder.Entity("AcmeCorporation.Core.Data.Models.UserSerial", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("SerialId")
                         .HasColumnType("int");
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
 
                     b.Property<int>("Uses")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("UserId", "SerialId");
 
                     b.HasIndex("SerialId")
                         .IsUnique();
 
-                    b.HasIndex("UserId")
-                        .IsUnique()
-                        .HasFilter("[UserId] IS NOT NULL");
-
                     b.ToTable("UserSerials");
+
+                    b.HasCheckConstraint("CK_UserSerial_Uses", "0 < [Uses] and [Uses] <= 2");
                 });
 
             modelBuilder.Entity("IdentityServer4.EntityFramework.Entities.DeviceFlowCodes", b =>
@@ -376,8 +380,10 @@ namespace AcmeCorporation.Data.Migrations
                         .IsRequired();
 
                     b.HasOne("AcmeCorporation.Core.Data.Models.ApplicationUser", "User")
-                        .WithOne("SerialRelation")
-                        .HasForeignKey("AcmeCorporation.Core.Data.Models.UserSerial", "UserId");
+                        .WithMany("SerialRelations")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Serial");
 
@@ -437,7 +443,7 @@ namespace AcmeCorporation.Data.Migrations
 
             modelBuilder.Entity("AcmeCorporation.Core.Data.Models.ApplicationUser", b =>
                 {
-                    b.Navigation("SerialRelation");
+                    b.Navigation("SerialRelations");
                 });
 
             modelBuilder.Entity("AcmeCorporation.Core.Data.Models.Serial", b =>

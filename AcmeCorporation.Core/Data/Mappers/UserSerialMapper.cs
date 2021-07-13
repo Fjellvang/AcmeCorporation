@@ -13,8 +13,8 @@ namespace AcmeCorporation.Core.Data.Mappers
 	{
 		public void Configure(EntityTypeBuilder<UserSerial> builder)
 		{
-			builder.HasKey(x => new { x.User, x.Serial });
-			builder.Property(e => e.UserId).HasMaxLength(50).IsRequired();
+			builder.HasKey(x => new { x.UserId, x.SerialId });
+			builder.Property(e => e.UserId).IsRequired();
 			builder.HasCheckConstraint("CK_UserSerial_Uses", "0 < [Uses] and [Uses] <= 2");
 		}
 	}
