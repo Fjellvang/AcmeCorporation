@@ -51,6 +51,7 @@ namespace AcmeCorportation.Test
 			dbContext = new AcmeCorporationDbContext(options, Options.Create(opOptions));
 			dbContext.SaveChanges();
 			dbContext.Serials.Add(new Serial() { Id = 0, Key = Guid.Empty });
+			dbContext.Serials.Add(new Serial() { Id = 0, Key = Guid.Parse("a5271c58-5544-47c5-9382-f8dd1b6a13d7") });
 			storeMock.SetupSequence(x => x.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
 				.ReturnsAsync(IdentityResult.Success)
 				.ReturnsAsync(IdentityResult.Failed(It.IsAny<IdentityError>()));
@@ -145,6 +146,20 @@ namespace AcmeCorportation.Test
 			Assert.AreEqual(SubmissionResult.Success, result);
 			var serial = user?.SerialRelations?.FirstOrDefault(x => x.Serial.Key == view.Serial);
 			Assert.AreEqual(2, serial.Uses);
+		}
+		[Test]
+		public async Task Test_Submit_Fresh_Serial_For_ExistingUser()
+		{
+			//arrange
+			await service.SubmitSerialAsync(view);
+			var user = dbContext.Users
+				.Include(x => x.SerialRelations)
+				.ThenInclude(x => x.Serial)
+				.FirstOrDefault(x => x.Email == view.Email);
+			//act
+			var result = await service.SubmitSerialAsync(user.Id, Guid.Parse("a5271c58-5544-47c5-9382-f8dd1b6a13d7"));
+			//assert
+			Assert.AreEqual(SubmissionResult.Success, result);
 		}
 	}
 }
