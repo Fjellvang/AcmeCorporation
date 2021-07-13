@@ -1,4 +1,5 @@
-﻿using AcmeCorporation.Core.Common.Utilities;
+﻿using AcmeCorporation.Core.Common.Extensions;
+using AcmeCorporation.Core.Common.Utilities;
 using AcmeCorporation.Core.Data.Models;
 using AcmeCorporation.Core.Draw.Dtos;
 using AcmeCorporation.Core.Draw.Services;
@@ -38,19 +39,12 @@ namespace AcmeCorporation.Core.Draw
 			this.userManager = userManager;
 		}
 
-		[HttpGet(nameof(Test))]
-		public IActionResult Test()
-		{
-			return Ok("HEJ");
-		}
 
 		[HttpGet(nameof(GetAllSubmissions)), Authorize(policy: "admin")]
 		public async Task<IActionResult> GetAllSubmissions(int page = 0, int pageSize = 10, CancellationToken cancellationToken = default)
 		{
 			//Poor mans authentication....
-			var user = await userManager.FindByIdAsync(GetUserId());
-			var claims = await userManager.GetClaimsAsync(user);
-			if (claims.Any(x => x.Type == "admin"))
+			if (await this.User.IsAdminAsync(userManager))
 			{
 				var submissions = await context.Serials.Where(x => x.UserRelation != null)
 					.Select(x => new { x.UserRelation.User.Email, Serial = x.Key })
@@ -64,15 +58,11 @@ namespace AcmeCorporation.Core.Draw
 			return Ok(Array.Empty<object>());
 		}
 
-		private string GetUserId()
-		{
-			return this.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-		}
 
 		[HttpPost(nameof(SubmitDrawAuthorized)), Authorize]
 		public async Task<IActionResult> SubmitDrawAuthorized([FromQuery] Guid serial)
 		{
-			var result = await drawSubmissionService.SubmitSerialAsync(GetUserId(), serial);
+			var result = await drawSubmissionService.SubmitSerialAsync(this.User.GetUserId(), serial);
 			if (result == SubmissionResult.Success)
 			{
 				return Ok();
@@ -98,11 +88,6 @@ namespace AcmeCorporation.Core.Draw
 			}
 
 			return Ok();
-		}
-
-		private static ProblemDetails BadRequestProblemDetails(string title, string message = null)
-		{
-			return new ProblemDetails() { Status = StatusCodes.Status400BadRequest, Title = title, Detail = message};
 		}
 	}
 }
