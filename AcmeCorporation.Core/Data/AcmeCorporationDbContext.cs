@@ -1,4 +1,5 @@
-﻿using AcmeCorporation.Core.Data.Models;
+﻿using AcmeCorporation.Core.Data.Mappers;
+using AcmeCorporation.Core.Data.Models;
 using IdentityServer4.EntityFramework.Options;
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.EntityFrameworkCore;
@@ -20,5 +21,11 @@ namespace AcmeCorporation.Data
 
 		public DbSet<Serial> Serials { get; set; }
 		public DbSet<UserSerial> UserSerials { get; set; }
+		protected override void OnModelCreating(ModelBuilder modelBuilder)
+		{
+			base.OnModelCreating(modelBuilder);
+			modelBuilder.ApplyConfiguration(new ApplicationUserMapper());
+			modelBuilder.ApplyConfiguration(new UserSerialMapper());
+		}
 	}
 }
