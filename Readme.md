@@ -25,7 +25,7 @@ To Run the project you need the following:
 Database migration are applied automatically when you run the project, if the connection string is configured correctly.
 
 
-##Improvements and shorcomings
+## Improvements and shorcomings
 
 * Better Frontend
 	* My emphasis has been on the Backend, hence the frontend implementation is pretty rudimentary. Proper error handling and UX to show the errors to the user would be expected.
