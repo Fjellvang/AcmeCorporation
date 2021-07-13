@@ -8,6 +8,7 @@ This is a simple project for acme corporation where in users supplied with a val
 * NUnit
 * Boostrap
 * Moq
+* Javascript
 * React
 
 #### Getting Started:
