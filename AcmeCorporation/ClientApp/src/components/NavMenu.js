@@ -62,7 +62,7 @@ export class NavMenu extends Component {
 								</NavItem>
 								{this.state.isAdmin ?
 									<NavItem>
-										<NavLink tag={Link} className="text-dark" to="/fetch-data">Submissions</NavLink>
+										<NavLink tag={Link} className="text-dark" to="/submissions">Submissions</NavLink>
 									</NavItem>
 									: ''}
 								<LoginMenu>
