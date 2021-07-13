@@ -1,4 +1,5 @@
-﻿using AcmeCorporation.Core.Common.Extensions;
+﻿using AcmeCorporation.Core.Common.Dtos;
+using AcmeCorporation.Core.Common.Extensions;
 using AcmeCorporation.Core.Common.Utilities;
 using AcmeCorporation.Core.Data.Models;
 using AcmeCorporation.Core.Draw.Dtos;
@@ -46,16 +47,19 @@ namespace AcmeCorporation.Core.Draw
 			//Poor mans authentication....
 			if (await this.User.IsAdminAsync(userManager))
 			{
-				var submissions = await context.Serials.Where(x => x.UserRelation != null)
-					.Select(x => new { x.UserRelation.User.Email, Serial = x.Key })
+				var query = context.Serials.Where(x => x.UserRelation != null)
+					.Select(x => new { x.UserRelation.User.Email, Serial = x.Key, x.UserRelation.Uses })
+					;
+				var totalResults = query.Count();
+				var submissions = await query
 					.Skip(page * pageSize)
 					.Take(pageSize)
 					.ToArrayAsync(cancellationToken)
 					;
 
-				return Ok(submissions);
+				return Ok(new PaginatedResult<object>(submissions, totalResults));
 			}
-			return Ok(Array.Empty<object>());
+			return Ok(new PaginatedResult<object>(null,0));
 		}
 
 

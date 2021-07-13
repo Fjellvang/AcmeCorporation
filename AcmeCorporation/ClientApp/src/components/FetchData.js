@@ -20,6 +20,7 @@ export class FetchData extends Component {
           <tr>
             <th>Email</th>
             <th>Serial</th>
+            <th>Uses</th>
           </tr>
         </thead>
         <tbody>
@@ -27,6 +28,7 @@ export class FetchData extends Component {
             <tr key={submission.email}>
               <td>{submission.email}</td>
               <td>{submission.serial}</td>
+              <td>{submission.uses}</td>
             </tr>
           )}
         </tbody>
@@ -41,8 +43,8 @@ export class FetchData extends Component {
 
     return (
       <div>
-        <h1 id="tabelLabel" >Weather forecast</h1>
-        <p>This component demonstrates fetching data from the server.</p>
+        <h1 id="tabelLabel" >Submissions</h1>
+        <p>This is all the submissions done by users with valid serials</p>
         {contents}
       </div>
     );
@@ -54,6 +56,6 @@ export class FetchData extends Component {
       headers: !token ? {} : { 'Authorization': `Bearer ${token}` }
     });
     const data = await response.json();
-    this.setState({ submissions: data, loading: false });
+    this.setState({ submissions: data.results, loading: false });
   }
 }
