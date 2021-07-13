@@ -23,6 +23,7 @@ export class AuthorizeService {
 
         await this.ensureUserManagerInitialized();
         const user = await this.userManager.getUser();
+        debugger;
         return user && user.profile;
     }
 
