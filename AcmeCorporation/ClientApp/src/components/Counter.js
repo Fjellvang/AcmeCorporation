@@ -6,8 +6,6 @@ export class Counter extends Component {
 
 	constructor(props) {
 		super(props);
-		this.state = { currentCount: 0 };
-		this.incrementCounter = this.submitForm.bind(this);
 
 		this.state = {
 			isAuthenticated: false,
@@ -51,7 +49,7 @@ export class Counter extends Component {
 			body: JSON.stringify({email, password, firstName, lastName, serial, aboveEighteen}),
 		});
 		if (response.ok) {
-			authService.signIn({ returnUrl: '/counter' });
+			authService.signIn({ returnUrl: '/draw' });
 		}
 	}
 	async submitFormAuthorized(e) {
