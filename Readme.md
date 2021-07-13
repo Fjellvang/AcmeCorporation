@@ -28,7 +28,7 @@ Database migration are applied automatically when you run the project, if the co
 ##Improvements and shorcomings
 
 * Better Frontend
-	My emphasis has been on the Backend, hence the frontend implementation is pretty rudimentary. Proper error handling and UX to show the errors to the user would be expected.
+	* My emphasis has been on the Backend, hence the frontend implementation is pretty rudimentary. Proper error handling and UX to show the errors to the user would be expected.
 
 * Issue with Authorize attributes and policies.
-	I encountered a configuration issue with how i handle claims, policies in Identity Provider. I made a quick fix to ensure the endpoints, but given more time i would solve it more elegantly. I assume its an issue with my jwt token authorization.
+	* I encountered a configuration issue with how i handle claims, policies in Identity Provider. I made a quick fix to ensure the endpoints, but given more time i would solve it more elegantly. I assume its an issue with my jwt token authorization.
