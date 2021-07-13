@@ -48,13 +48,13 @@ namespace AcmeCorporation.Core.Draw
 		public async Task<IActionResult> GetAllSubmissions(int page = 0, int pageSize = 10, CancellationToken cancellationToken = default)
 		{
 			//Poor mans authentication....
-			var user = await userManager.FindByIdAsync(this.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+			var user = await userManager.FindByIdAsync(GetUserId());
 			var claims = await userManager.GetClaimsAsync(user);
 			if (claims.Any(x => x.Type == "admin"))
 			{
 				var submissions = await context.Serials.Where(x => x.UserRelation != null)
 					.Select(x => new { x.UserRelation.User.Email, Serial = x.Key })
-					.Skip(page*pageSize)
+					.Skip(page * pageSize)
 					.Take(pageSize)
 					.ToArrayAsync(cancellationToken)
 					;
@@ -64,12 +64,15 @@ namespace AcmeCorporation.Core.Draw
 			return Ok(Array.Empty<object>());
 		}
 
-		[HttpPost(nameof(SubmitDrawAuthorized)), Authorize]
-		public async Task<IActionResult> SubmitDrawAuthorized(Guid serial)
+		private string GetUserId()
 		{
-			var user = await userManager.GetUserAsync(this.User);
+			return this.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+		}
 
-			var result = await drawSubmissionService.SubmitSerialAsync(user.Id, serial);
+		[HttpPost(nameof(SubmitDrawAuthorized)), Authorize]
+		public async Task<IActionResult> SubmitDrawAuthorized([FromQuery] Guid serial)
+		{
+			var result = await drawSubmissionService.SubmitSerialAsync(GetUserId(), serial);
 			if (result == SubmissionResult.Success)
 			{
 				return Ok();

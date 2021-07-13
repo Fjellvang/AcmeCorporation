@@ -14,7 +14,7 @@ namespace AcmeCorporation.Core.Data.Mappers
 		public void Configure(EntityTypeBuilder<UserSerial> builder)
 		{
 			builder.HasKey(x => new { x.User, x.Serial });
-			builder.HasCheckConstraint("CK_UserSerial_Uses", "[Uses] >= 1");
+			builder.HasCheckConstraint("CK_UserSerial_Uses", "0 < [Uses] && [Uses] <= 2");
 		}
 	}
 }

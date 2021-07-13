@@ -48,9 +48,22 @@ export class Counter extends Component {
 			method: 'POST',
 			//headers: !token ? {} : { 'Authorization': `Bearer ${token}` },
 			headers: { 'Content-Type': ' application/json'},
-			body: JSON.stringify({email:email, password:password, firstName, lastName, serial, aboveEighteen}),
+			body: JSON.stringify({email, password, firstName, lastName, serial, aboveEighteen}),
 		});
-		authService.signIn({ returnUrl: '/counter' });
+		if (response.ok) {
+			authService.signIn({ returnUrl: '/counter' });
+		}
+	}
+	async submitFormAuthorized(e) {
+		e.preventDefault();
+		const target = e.target;
+		const serial = target.serial.value;
+		const token = await authService.getAccessToken();
+		const response = await fetch(`api/draw/SubmitDrawAuthorized?serial=${serial}`, {
+			method: 'POST',
+			headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': ' application/json' },
+			//body: JSON.stringify({serial}),
+		});
 	}
 
 	anonymousView() {
@@ -87,8 +100,15 @@ export class Counter extends Component {
 
 	authenticatedView(userName) {
 		return (
-			<form>
-				<h2>HELLO {userName}</h2>
+			<form onSubmit={this.submitFormAuthorized}>
+				<h2>Hi {userName}</h2>
+				<h3>Here you can submit another serial</h3>
+				<div class="mb-3">
+					<label class="form-label">Serial</label>
+					<input type="text" class="form-control" id="serial" />
+					<div id="serialHelp" class="form-text">The serial provided to enter the draw!</div>
+				</div>
+				<button type="submit" class="btn btn-primary">Submit</button>
 			</form>
 		);
 	}

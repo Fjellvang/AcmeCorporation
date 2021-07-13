@@ -83,17 +83,32 @@ namespace AcmeCorporation.Core.Draw.Services
 				.ThenInclude(x => x.User)
 				.FirstOrDefaultAsync(x => x.Key == serial);
 
-			if (validSerial is null || validSerial.UserRelation.UserId != userId)
+			bool serialUsedOnce = validSerial.UserRelation != null;
+
+			if (validSerial is null || serialUsedOnce && validSerial.UserRelation.UserId != userId)
 			{
 				return SubmissionResult.InvalidSerial;
 			}
 
-			if (validSerial.UserRelation.Uses > 1)
+			if (serialUsedOnce && validSerial.UserRelation.Uses > 1)
 			{
 				return SubmissionResult.SerialAlreadySubmitted;
 			}
 
-			validSerial.UserRelation.Uses++;
+			if (serialUsedOnce)
+			{
+				validSerial.UserRelation.Uses++;
+			}
+			else
+			{
+				var relation = new UserSerial()
+				{
+					Serial = validSerial,
+					UserId = userId,
+					Uses = 1
+				};
+				context.UserSerials.Add(relation);
+			}
 			await context.SaveChangesAsync();
 			return SubmissionResult.Success;
 		}
