@@ -24,7 +24,7 @@ export class NavMenu extends Component {
 	}
 
 	async populateState() {
-		const [isAuthenticated] = await authService.isAuthenticated();
+		const isAuthenticated = await authService.isAuthenticated();
 		this.setState({
 			isAuthenticated,
 		});
