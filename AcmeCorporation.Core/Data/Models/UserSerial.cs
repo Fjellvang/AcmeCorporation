@@ -8,7 +8,6 @@ namespace AcmeCorporation.Core.Data.Models
 {
 	public class UserSerial
 	{
-		public int Id { get; set; }
 		public int Uses { get; set; }
 		public int SerialId { get; set; }
 		public string UserId { get; set; }

@@ -1,4 +1,4 @@
-#Acme Copororation
+# Acme Copororation
 
 This is a simple project for acme corporation where in users supplied with a valid serial can enter a draw. Admins can see all entries when logged in. 
 
