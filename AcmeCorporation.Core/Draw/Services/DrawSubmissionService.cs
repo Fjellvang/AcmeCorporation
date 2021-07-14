@@ -84,13 +84,12 @@ namespace AcmeCorporation.Core.Draw.Services
 				.FirstOrDefaultAsync(x => x.Key == serial);
 
 			bool serialUsedOnce = validSerial.UserRelation != null;
-
-			if (validSerial is null || serialUsedOnce && validSerial.UserRelation.UserId != userId)
+			if (validSerial is null)
 			{
 				return SubmissionResult.InvalidSerial;
 			}
 
-			if (serialUsedOnce && validSerial.UserRelation.Uses > 1)
+			if (serialUsedOnce && (validSerial.UserRelation.Uses > 1 || validSerial.UserRelation.UserId != userId))
 			{
 				return SubmissionResult.SerialAlreadySubmitted;
 			}

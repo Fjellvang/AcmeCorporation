@@ -44,13 +44,8 @@ namespace AcmeCorportation.Test
 				LastName = view.LastName,
 			};
 			storeMock = MockHelpers.MockUserManager<ApplicationUser>();
-			var options = new DbContextOptionsBuilder<AcmeCorporationDbContext>()
-				  .UseInMemoryDatabase(Guid.NewGuid().ToString())
-				  .Options;
-			var opOptions = new OperationalStoreOptions();
-			dbContext = new AcmeCorporationDbContext(options, Options.Create(opOptions));
-			dbContext.SaveChanges();
-			dbContext.Serials.Add(new Serial() { Id = 0, Key = Guid.Empty });
+			SeedInMemoryDatabase();
+
 			storeMock.SetupSequence(x => x.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
 				.ReturnsAsync(IdentityResult.Success)
 				.ReturnsAsync(IdentityResult.Failed(It.IsAny<IdentityError>()));
@@ -60,6 +55,21 @@ namespace AcmeCorportation.Test
 
 			service = new DrawSubmissionService(storeMock.Object, dbContext, logMock.Object);
 
+		}
+
+		private void SeedInMemoryDatabase()
+		{
+			var options = new DbContextOptionsBuilder<AcmeCorporationDbContext>()
+				  .UseInMemoryDatabase(Guid.NewGuid().ToString())
+				  .Options;
+			var opOptions = new OperationalStoreOptions();
+			dbContext = new AcmeCorporationDbContext(options, Options.Create(opOptions));
+			dbContext.Serials.Add(new Serial() { Id = 0, Key = Guid.Empty });
+			dbContext.Serials.Add(new Serial() { Id = 2, Key = new Guid("63e47a81-da8b-4ac2-ba1f-c8e58feb6660") });
+
+			dbContext.Users.Add(new ApplicationUser() { UserName = "aba@b.dk", Email = "aba@b.dk", Id = "1" });
+			dbContext.UserSerials.Add(new UserSerial() { SerialId = 2, UserId = "1" });
+			dbContext.SaveChanges();
 		}
 
 		[Test]
@@ -145,6 +155,19 @@ namespace AcmeCorportation.Test
 			Assert.AreEqual(SubmissionResult.Success, result);
 			var serial = user?.SerialRelations?.FirstOrDefault(x => x.Serial.Key == view.Serial);
 			Assert.AreEqual(2, serial.Uses);
+		}
+		[Test]
+		public async Task Test_Used_Id_Fails_for_new_user()
+		{
+
+			//arrange
+			await service.SubmitSerialAsync(view);
+			//act
+			var result = await service.SubmitSerialAsync("2", Guid.Empty);
+
+			//assert
+			Assert.AreEqual(SubmissionResult.SerialAlreadySubmitted, result);
+
 		}
 	}
 }
