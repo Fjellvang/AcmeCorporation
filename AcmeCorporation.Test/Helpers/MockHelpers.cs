@@ -21,12 +21,12 @@ namespace AcmeCorporation.Test.Helpers
     {
         public static StringBuilder LogMessage = new StringBuilder();
 
-        public static Mock<SignInManager<TUser>> MockSigninManager<TUser>() where TUser : class
+        public static Mock<SignInManager<TUser>> MockSigninManager<TUser>(UserManager<TUser> userManager = null) where TUser : class
 		{
             var contextaccessor = new Mock<IHttpContextAccessor>();
             var claimsFactory = new Mock<IUserClaimsPrincipalFactory<TUser>>();
-			//var test = new SignInManager<TUser>(TestUserManager<TUser>(), contextaccessor.Object, claimsFactory.Object, null, null, null, null);
-			var mgr = new Mock<SignInManager<TUser>>(TestUserManager<TUser>(), contextaccessor.Object, claimsFactory.Object, null, null, null, null);
+			var test = new SignInManager<TUser>(userManager ?? TestUserManager<TUser>(), contextaccessor.Object, claimsFactory.Object, null, null, null, null);
+			var mgr = new Mock<SignInManager<TUser>>(userManager ?? TestUserManager<TUser>(), contextaccessor.Object, claimsFactory.Object, null, null, null, null);
             return mgr;
 		}
         public static Mock<UserManager<TUser>> MockUserManager<TUser>() where TUser : class

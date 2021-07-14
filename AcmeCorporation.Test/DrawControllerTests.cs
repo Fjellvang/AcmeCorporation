@@ -23,25 +23,48 @@ namespace AcmeCorporation.Test
 		private Mock<ILogger<DrawController>> logger;
 		private Mock<IDrawSubmissionService> submissionService;
 
-		private SignInManager<ApplicationUser> signInManager;
+		private Mock<SignInManager<ApplicationUser>> signInManagerMock;
+		private Mock<UserManager<ApplicationUser>> userManagerMock;
 
 		[SetUp]
 		public void Setup()
 		{
 			logger = new Mock<ILogger<DrawController>>();
 			submissionService = new Mock<IDrawSubmissionService>();
+			this.userManagerMock = MockHelpers.MockUserManager<ApplicationUser>();
+			this.userManagerMock.Setup(x => x.FindByEmailAsync(It.IsAny<string>()))
+				.ReturnsAsync(new ApplicationUser())
+				;
+			signInManagerMock = MockHelpers.MockSigninManager<ApplicationUser>(this.userManagerMock.Object);
+		}
+		private DrawController GetController()
+		{
+			return new DrawController(
+							DbContextHelper.InMemoryDBContext(), logger.Object, submissionService.Object, signInManagerMock.Object,
+							this.userManagerMock.Object);
+		}
+		[Test]
+		public async Task SubmitDraw_Returns_200_And_Calls_signin()
+		{
+			//arrange
+			submissionService.Setup(x => x.SubmitSerialAsync(It.IsAny<DrawSubmissionView>()))
+				.ReturnsAsync(SubmissionResult.Success)
+				;
+			var view = new DrawSubmissionView() { AboveEighteen = true, Serial = Guid.NewGuid() };
+			var sut = GetController();
+			//act
+			var result = await sut.SubmitDraw(view) as OkResult;
 
-			var signInManagerMock = MockHelpers.MockSigninManager<ApplicationUser>();
-			//signInManagerMock.Setup(x => x.)
-			signInManager = signInManagerMock.Object;
+			//Assert
+			signInManagerMock.Verify(x => x.SignInAsync(It.IsAny<ApplicationUser>(), true, null), Times.Once);
+			Assert.IsNotNull(result);
+			Assert.AreEqual(200, result.StatusCode);
 		}
 		[Test]
 		public async Task GetAllSubmissions_Returns_Empty_when_Unautorized()
 		{
 			//arrange
-			var sut = new DrawController(
-				DbContextHelper.InMemoryDBContext(), logger.Object, submissionService.Object, signInManager,
-				MockHelpers.TestUserManager<ApplicationUser>());
+			var sut = GetController();
 			sut.ControllerContext = new ControllerContext
 			{
 				HttpContext = new DefaultHttpContext() { User = new System.Security.Claims.ClaimsPrincipal() }
@@ -62,7 +85,7 @@ namespace AcmeCorporation.Test
 		public async Task Empty_Guid_Authorized_Returns_400()
 		{
 			//arrange
-			var sut = new DrawController(DbContextHelper.InMemoryDBContext(), logger.Object, submissionService.Object, signInManager, MockHelpers.TestUserManager<ApplicationUser>());
+			var sut = GetController();
 			//act
 			var result = (await sut.SubmitDrawAuthorized(Guid.Empty)) as BadRequestObjectResult;
 			//assert
