@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import authService from './api-authorization/AuthorizeService'
 
 export class Counter extends Component {
@@ -13,6 +14,7 @@ export class Counter extends Component {
 		};
 	}
 
+
 	componentDidMount() {
 		this._subscription = authService.subscribe(() => this.populateState());
 		this.populateState();
@@ -26,13 +28,23 @@ export class Counter extends Component {
 		});
 	}
 
-	async submitForm(e) {
+	setModal = (bool, text) => {
+		console.log(bool);
+		const state = this.state;
+		state.modalText = text;
+		state.modal = bool;
+		this.setState(state);
+	}
+
+
+	submitForm = async (e) => {
 		e.preventDefault();
 		const target = e.target;
 
 		const aboveEighteen = target.aboveEighteen.checked;
 		if (!aboveEighteen) {
-			return;// Add some FE coolness...
+			this.setModal(true, "Only people above 18 are allowed to enter the draw");
+			return;
 		}
 
 		const password = target.password.value;
@@ -41,18 +53,19 @@ export class Counter extends Component {
 		const lastName = target.lastName.value;
 		const serial = target.serial.value;
 
-		//const token = await authService.getAccessToken();
 		const response = await fetch('api/draw/submitDraw', {
 			method: 'POST',
-			//headers: !token ? {} : { 'Authorization': `Bearer ${token}` },
 			headers: { 'Content-Type': ' application/json'},
 			body: JSON.stringify({email, password, firstName, lastName, serial, aboveEighteen}),
 		});
 		if (response.ok) {
 			authService.signIn({ returnUrl: '/draw' });
 		}
+		var responseText = await response.json();
+		//TODO: Add proper errors here...
+		this.setModal(true, responseText.title);
 	}
-	async submitFormAuthorized(e) {
+	submitFormAuthorized = async (e) => {
 		e.preventDefault();
 		const target = e.target;
 		const serial = target.serial.value;
@@ -62,6 +75,7 @@ export class Counter extends Component {
 			headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': ' application/json' },
 			//body: JSON.stringify({serial}),
 		});
+		this.setModal(true, response);
 	}
 
 	anonymousView() {
@@ -111,10 +125,23 @@ export class Counter extends Component {
 		);
 	}
 
+	toggle = () => this.setModal(!this.state.modal);
+
 	render() {
         const { isAuthenticated, userName } = this.state;
 		return (
 			<div>
+				<div>
+					<Modal isOpen={this.state.modal} toggle={this.toggle} className="test">
+						<ModalHeader toggle={this.toggle}>Modal title</ModalHeader>
+						<ModalBody>
+							{this.state.modalText}
+						</ModalBody>
+						<ModalFooter>
+							<Button color="primary" onClick={this.toggle}>Ok</Button>{' '}
+						</ModalFooter>
+					</Modal>
+				</div>
 				<h1>Enter the Draw!</h1>
 				{isAuthenticated ? this.authenticatedView(userName) : this.anonymousView()}
 			</div>

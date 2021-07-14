@@ -3,6 +3,7 @@ using AcmeCorporation.Core.Common.Extensions;
 using AcmeCorporation.Core.Common.Utilities;
 using AcmeCorporation.Core.Data.Models;
 using AcmeCorporation.Core.Draw.Dtos;
+using AcmeCorporation.Core.Draw.Extensions;
 using AcmeCorporation.Core.Draw.Services;
 using AcmeCorporation.Data;
 using Microsoft.AspNetCore.Authorization;
@@ -75,8 +76,7 @@ namespace AcmeCorporation.Core.Draw
 			{
 				return Ok();
 			}
-			//TODO: Provide better response.
-			return BadRequest(HttpUtilities.BadRequestProblemDetails("There was an error in submitting the serial."));
+			return BadRequest(HttpUtilities.BadRequestProblemDetails(result.GetErrorMessage()));
 		}
 
 		[HttpPost(nameof(SubmitDraw))]
@@ -97,9 +97,10 @@ namespace AcmeCorporation.Core.Draw
 			{
 				var user = await userManager.FindByEmailAsync(submission.Email);
 				await signInManager.SignInAsync(user, true);
+				return Ok();
 			}
 
-			return Ok();
+			return BadRequest(HttpUtilities.BadRequestProblemDetails(result.GetErrorMessage()));
 		}
 	}
 }
