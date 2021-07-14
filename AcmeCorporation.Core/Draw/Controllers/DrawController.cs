@@ -49,7 +49,7 @@ namespace AcmeCorporation.Core.Draw
 			if (await this.User.IsAdminAsync(userManager))
 			{
 				var query = context.Serials.Where(x => x.UserRelation != null)
-					.Select(x => new { x.UserRelation.User.Email, Serial = x.Key, x.UserRelation.Uses })
+					.Select(x => new AdminSubmissionView(x.UserRelation.User.Email, x.Key, x.UserRelation.Uses))
 					;
 				var totalResults = query.Count();
 				var submissions = await query
@@ -58,9 +58,9 @@ namespace AcmeCorporation.Core.Draw
 					.ToArrayAsync(cancellationToken)
 					;
 
-				return Ok(new PaginatedResult<object>(submissions, totalResults));
+				return Ok(new PaginatedResult<AdminSubmissionView>(submissions, totalResults));
 			}
-			return Ok(new PaginatedResult<object>(null,0));
+			return Ok(new PaginatedResult<AdminSubmissionView>(Array.Empty<AdminSubmissionView>(),0));
 		}
 
 
