@@ -10,6 +10,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{633968FC-775F-4594-9D5C-4F86BA9140B2}"
 	ProjectSection(SolutionItems) = preProject
 		migration.sh = migration.sh
+		Readme.md = Readme.md
 		validGuids.txt = validGuids.txt
 	EndProjectSection
 EndProject
