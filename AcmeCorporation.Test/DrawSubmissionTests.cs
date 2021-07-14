@@ -59,11 +59,7 @@ namespace AcmeCorportation.Test
 
 		private void SeedInMemoryDatabase()
 		{
-			var options = new DbContextOptionsBuilder<AcmeCorporationDbContext>()
-				  .UseInMemoryDatabase(Guid.NewGuid().ToString())
-				  .Options;
-			var opOptions = new OperationalStoreOptions();
-			dbContext = new AcmeCorporationDbContext(options, Options.Create(opOptions));
+			dbContext = DbContextHelper.InMemoryDBContext();
 			dbContext.Serials.Add(new Serial() { Id = 0, Key = Guid.Empty });
 			dbContext.Serials.Add(new Serial() { Id = 2, Key = new Guid("63e47a81-da8b-4ac2-ba1f-c8e58feb6660") });
 

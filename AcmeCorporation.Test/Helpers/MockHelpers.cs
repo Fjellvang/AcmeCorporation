@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -20,6 +21,14 @@ namespace AcmeCorporation.Test.Helpers
     {
         public static StringBuilder LogMessage = new StringBuilder();
 
+        public static Mock<SignInManager<TUser>> MockSigninManager<TUser>() where TUser : class
+		{
+            var contextaccessor = new Mock<IHttpContextAccessor>();
+            var claimsFactory = new Mock<IUserClaimsPrincipalFactory<TUser>>();
+			//var test = new SignInManager<TUser>(TestUserManager<TUser>(), contextaccessor.Object, claimsFactory.Object, null, null, null, null);
+			var mgr = new Mock<SignInManager<TUser>>(TestUserManager<TUser>(), contextaccessor.Object, claimsFactory.Object, null, null, null, null);
+            return mgr;
+		}
         public static Mock<UserManager<TUser>> MockUserManager<TUser>() where TUser : class
         {
             var store = new Mock<IUserStore<TUser>>();
