@@ -72,7 +72,6 @@ namespace AcmeCorporation.Core.Draw.Services
 				await context.SaveChangesAsync();
 				return SubmissionResult.Success;
 			}
-			//TODO:
 			return SubmissionResult.Failure;
 		}
 

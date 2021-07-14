@@ -21,7 +21,6 @@ namespace AcmeCorportation.Test
 	public class Tests
 	{
 		private DrawSubmissionService service;
-		private ApplicationUser applicationUser;
 		private Mock<UserManager<ApplicationUser>> storeMock;
 		private AcmeCorporationDbContext dbContext;
 		private DrawSubmissionView view;
