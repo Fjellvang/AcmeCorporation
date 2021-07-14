@@ -66,6 +66,10 @@ namespace AcmeCorporation.Core.Draw
 		[HttpPost(nameof(SubmitDrawAuthorized)), Authorize]
 		public async Task<IActionResult> SubmitDrawAuthorized([FromQuery] Guid serial)
 		{
+			if (serial == Guid.Empty)
+			{
+				return BadRequest(HttpUtilities.BadRequestProblemDetails("Error: Invalid serial provided"));
+			}
 			var result = await drawSubmissionService.SubmitSerialAsync(this.User.GetUserId(), serial);
 			if (result == SubmissionResult.Success)
 			{
@@ -81,6 +85,10 @@ namespace AcmeCorporation.Core.Draw
 			if (!submission.AboveEighteen)
 			{
 				return BadRequest(HttpUtilities.BadRequestProblemDetails("User Needs to be above 18."));
+			}
+			if (submission.Serial == Guid.Empty)
+			{
+				return BadRequest(HttpUtilities.BadRequestProblemDetails("Error: Invalid serial provided"));
 			}
 
 			var result = await drawSubmissionService.SubmitSerialAsync(submission);
